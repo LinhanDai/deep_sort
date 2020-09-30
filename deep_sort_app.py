@@ -6,7 +6,7 @@ import os
 
 import cv2
 import numpy as np
-
+from time import time
 from application_util import preprocessing
 from application_util import visualization
 from deep_sort import nn_matching
@@ -165,7 +165,7 @@ def run(sequence_dir, detection_file, output_file, min_confidence,
 
     def frame_callback(vis, frame_idx):
         print("Processing frame %05d" % frame_idx)
-
+        start = time()
         # Load image and generate detections.
         detections = create_detections(
             seq_info["detections"], frame_idx, min_detection_height)
@@ -197,7 +197,8 @@ def run(sequence_dir, detection_file, output_file, min_confidence,
             bbox = track.to_tlwh()
             results.append([
                 frame_idx, track.track_id, bbox[0], bbox[1], bbox[2], bbox[3]])
-
+        end = time()
+        print("fps:%fs" % (1 / (end - start)))
     # Run tracker.
     if display:
         visualizer = visualization.Visualization(seq_info, update_ms=5)
